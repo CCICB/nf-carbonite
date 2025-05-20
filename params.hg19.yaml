@@ -1,0 +1,9 @@
+mixcr_license : /path/to/ref/files/19/mi.license
+genome_lib_dir : /path/to/ref/files/19/ctat_genome_lib_build_dir
+star_dir : /path/to/ref/files/19/STAR
+gtf_file : /path/to/ref/files/19/genes.gtf
+te_gtf_file : /path/to/ref/files/19/GRCh37_GENCODE_rmsk_TE.gtf
+rnaindel_dir : /path/to/ref/files/19/data_dir_grch37
+ensembl_data_dir : /path/to/ref/files/ensembl_data
+annovar_dir : /path/to/ref/files/19/annovar
+
