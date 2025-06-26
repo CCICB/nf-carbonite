@@ -109,3 +109,15 @@ mintie_dir : /path/to/ref/files/mintie-0.3.9-0/ref
 | `-resume`         | `Boolean` | Enables reuse of process results                                      | `false`       |
 | `-w`              | `String`  | Path to working directory                                             | <Curent dir>  |
 | `-c`              | `String`  | Custom config files. Note: Not for parameters.                        | None          |
+
+## Funding
+The development of Carbonite has been supported by grants, fellowships and scholarships provided by:
+- MRFF
+- NHMRC
+- Minderoo Foundation
+- Luminesce Alliance
+- NSW Health
+- CINSW
+- Australian Government Research Training Program
+- Cure Brain Cancer Foundation
+- Bioplatforms Australia (enabled by NCRIS), the NCI and Pawsey Supercomputing Research Centre
