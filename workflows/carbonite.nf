@@ -54,8 +54,7 @@ include { MINTIE as MINTIE } from '../modules/local/mintie.nf'
 // Load assets
 ensg2hgnc_file= Channel.fromPath(params.ensg2hgnc_file)
 excluded_genes= Channel.fromPath(params.excluded_genes)
-interval_list= Channel.fromPath(params.interval_list)
-
+freebayes_interval_list = params.freebayes_interval_list ? Channel.fromPath(params.freebayes_interval_list, checkIfExists: true) : Channel.value([])
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     RUN MAIN WORKFLOW
@@ -65,7 +64,6 @@ interval_list= Channel.fromPath(params.interval_list)
 workflow RNASEQ {
     take:
     fastq
-    samples
 
     main: 
     MIXCR (
@@ -119,14 +117,12 @@ workflow RNASEQ {
         params.rnaindel_dir
     )
 
-
     if (params.ref_genome_version != 'hg19'){
         FREEBAYES (
             PICARD.out.sorted_bam,
             params.star_dir,
-            params.interval_list
+            freebayes_interval_list
         )
-
         ISOFOX (
             PICARD.out.sorted_bam,
             params.star_dir,
@@ -135,7 +131,7 @@ workflow RNASEQ {
         
         if (params.mintie_dir){
             MINTIE(
-                samples
+                fastq
             ) 
         }
     } 
@@ -178,7 +174,7 @@ workflow MAIN {
     println("Workflow Engine: " +  workflow.containerEngine)
 
     CONCAT_FASTQ(samples)
-    RNASEQ(CONCAT_FASTQ.out.fastq, samples)
+    RNASEQ(CONCAT_FASTQ.out.fastq)
 }
 
 /*

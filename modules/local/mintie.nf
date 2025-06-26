@@ -7,7 +7,7 @@ process MINTIE {
     containerOptions "--bind ${params.mintie_dir}:/mnt/ref"
 
     input:
-    tuple val(rnaseq_id), path(folder)
+    tuple val(rnaseq_id), path(fastq1), path(fastq2)
 
     output:
     path "./${rnaseq_id}/${rnaseq_id}_results.tsv"
@@ -32,7 +32,7 @@ process MINTIE {
         gene_filter : '',
         var_filter : '',
         splice_motif_mismatch : 4,
-        fastqCaseFormat : '%_R*.fastq.gz',
+        fastqCaseFormat : '%_all_R*.fastq.gz',
         assemblyFasta : '',
         run_de_step : 'false',
 
@@ -43,11 +43,14 @@ process MINTIE {
     content = content.replace('"', '\\"')
 
     """
-    cat <<EOF > params.txt
+    cat <<EOF >   params.txt
 ${content}
 EOF
+
     export PBS_O_LANG=en_AU.UTF-8
-    mintie -w -p params.txt `ls ${folder}/*.fastq.gz`
+    export PBS_O_WORKDIR=$PWD
+    export PBS_O_HOME=$PWD
+    mintie -w -p params.txt `ls *.fastq.gz`
     """
 }
 
