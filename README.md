@@ -120,4 +120,4 @@ The development of Carbonite has been supported by grants, fellowships and schol
 - CINSW
 - Australian Government Research Training Program
 - Cure Brain Cancer Foundation
-- Bioplatforms Australia (enabled by NCRIS), the NCI and Pawsey Supercomputing Research Centre
+- [Bioplatforms Australia (enabled by NCRIS), the NCI and Pawsey Supercomputing Research Centre](https://australianbiocommons.github.io/ables/acknowledgements)
