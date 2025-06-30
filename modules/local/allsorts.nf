@@ -2,7 +2,7 @@ nextflow.enable.dsl=2
 
 process ALLSORTS {
     tag "$rnaseq_id"
-    publishDir "${params.outdir}/${rnaseq_id}/allsorts"
+    publishDir "${params.outdir}/${rnaseq_id}/allsorts", mode: 'copy'
 
     input:
         tuple val(rnaseq_id), path(genes)
