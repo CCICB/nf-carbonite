@@ -1,0 +1,327 @@
+app_content:
+    code_package: 6793200551953506dd0abdd5
+    entrypoint: main.nf
+    executor_version: 22.10.7
+class: nextflow
+cwlVersion: None
+doc: "## Introduction\n\n**nf-carbonite** is a RNA-Seq analysis workflow. \n\nThe\
+    \ pipeline is built by CCIA using [Nextflow](https://www.nextflow.io), a workflow\
+    \ tool to run tasks across multiple compute infrastructures in a very portable\
+    \ manner. It uses Docker containers making installation trivial and results highly\
+    \ reproducible.\n\n## Tools\n   - STAR (v2.7.8a - https://github.com/alexdobin/STAR)\n\
+    \   - STAR-Fusion (v1.12.0 - https://github.com/STAR-Fusion/STAR-Fusion/wiki)\n\
+    \   - TEtranscripts  (v2.2.1 - https://github.com/mhammell-laboratory/TEtranscripts.git)\
+    \ \n   - MiXCR (v4.3.2 - https://github.com/milaboratory/mixcr)\n   - Arriba (v2.4.0\
+    \ - https://github.com/suhrig/arriba)\n   - RNAIndel (v3.3.0 - https://github.com/stjude/RNAIndel)\n\
+    \   - RSEM (v1.3.3 - https://github.com/deweylab/RSEM)\n   - Picard tools (v2.25.7)\n\
+    \   - ALLSorts (v0.2.0)\n   - TALLSorts\n\n## Credits\n\n[nf-carbonite](https://github.com/nf-carbonite)\
+    \ was used as the template. \n\n## Compatible Envirnments\n\nAs of 17th September\
+    \ 2024, nf-carbonite has been successfully tested on:\n- Pawsey\n- NCI Gadi\n\
+    - CCI dev VM\n\n## Requirements\n- Nextflow\n- Docker or Singularity\n\n## Installation\n\
+    ```bash\n# Example installation commands\ngit clone git@bitbucket.org:cciacb/nf-carbonite.git\n\
+    ```\n\n## How to run\nThe profile parameter depends on the environment you are\
+    \ running in. For example, to run locally, use:\n```\nnextflow /path/to/nf-carbonite/main.nf\
+    \ \\\n--outdir /path/to_outputs \\\n--input /path/to/samples.csv \\\n--mixcr_license\
+    \ /path/to/mi.license \\\n--genome_lib_dir /path/to/ctat_genome_lib_build_dir\
+    \ \\\n--star_dir  /path/to/STAR \\\n--gtf_file /path/to/gencode.v41.annotation.gtf\
+    \ \\\n--te_gtf_file /path/to/GRCh38_GENCODE_rmsk_TE.gtf \\\n--rnaindel_dir /path/to/data_dir_grch38\
+    \ \\\n-profile docker,local -w /path/to/work/dir -resume\n\n```\n\n### Required\
+    \ Arguments\n\n| Argument          | Type   | Description                    \
+    \                                |\n|-------------------|--------|----------------------------------------------------------------|\n\
+    | `--input`         | `String` | Path to the sample sheet. See Documentation for\
+    \ correct format  |\n| `--outdir`        | `String` | Path to save the output.\
+    \ The directory must exist beforehand.   |\n| `--profile`       | `String` | Name\
+    \ of configuration profiles                                  |\n| `--mixcr_license`\
+    \ | `String` | Path to MiXCR license file                                    \
+    \  |\n| `--genome_lib_dir`| `String` | Path to STAR-Fusion CTAT genome library\
+    \ build directory         |\n| `--star_dir`      | `String` | Path to STAR genome\
+    \ build directory                             |\n| `--gtf_file`      | `String`\
+    \ | Path to Genic GTF file                                          |\n| `--te_gtf_file`\
+    \   | `String` | Path to TE GTF file                                         \
+    \    |\n| `--rnaindel_dir`  | `String` | Path to RNAIndel directory          \
+    \                            |\n\n### Optional Arguments\n\n| Argument       \
+    \   | Type    | Description                                                  \
+    \         | Default Value |\n|-------------------|---------|-----------------------------------------------------------------------|---------------|\n\
+    | `-resume`         | `Boolean` | Enables reuse of process results           \
+    \                           | `false`       |\n| `-w`              | `String`\
+    \  | Path to working directory                                             | <Curent\
+    \ dir>  |"
+hints:
+-   class: sbg:NextflowExecutionMode
+    value: multi-instance
+inputs:
+-   doc: Select which profile(s) you want to use for task execution.
+    id: profile
+    inputBinding:
+        itemSeparator: ','
+        prefix: -profile
+    label: Profiles
+    type:
+    - 'null'
+    -   items:
+            name: profile
+            symbols:
+            - arm
+            - base
+            - cavatica
+            - debug
+            - docker
+            - local
+            - nci
+            - pawsey
+            - singularity
+            - tower
+            type: enum
+        type: array
+-   id: tracedir
+    inputBinding:
+        prefix: --tracedir
+    sbg:toolDefaultValue: $outdir/pipeline_info
+    type:
+    - 'null'
+    - string
+-   id: email
+    inputBinding:
+        prefix: --email
+    type:
+    - 'null'
+    - string
+-   id: version
+    inputBinding:
+        prefix: --version
+    type:
+    - 'null'
+    - string
+-   doc: You will need to create a design file with information about the samples
+        in your experiment before running the pipeline. Use this parameter to specify
+        its location. It has to be a comma-separated file with 3 columns, and a header
+        row. See [usage docs](https://nf-co.re/oncoanalyser/usage#samplesheet-input).
+    format: text/csv
+    id: input
+    inputBinding:
+        prefix: --input
+    label: Path to comma-separated file containing information about the samples in
+        the experiment.
+    sbg:category: Input/output options
+    sbg:icon: fas fa-file-csv
+    sbg:pattern: ^\S+\.csv$
+    type:
+    - 'null'
+    - File
+-   id: outdir
+    inputBinding:
+        prefix: --outdir
+    label: The output directory where the results will be saved. You have to use absolute
+        paths to storage on Cloud infrastructure.
+    sbg:category: Input/output options
+    sbg:icon: fas fa-folder-open
+    type: string
+-   id: mixcr_license
+    inputBinding:
+        prefix: --mixcr_license
+    sbg:category: Input/output options
+    type:
+    - 'null'
+    - File
+-   id: genome_lib_dir
+    inputBinding:
+        prefix: --genome_lib_dir
+    sbg:category: Input/output options
+    type:
+    - 'null'
+    - Directory
+-   id: star_dir
+    inputBinding:
+        prefix: --star_dir
+    sbg:category: Input/output options
+    type:
+    - 'null'
+    - Directory
+-   id: gtf_file
+    inputBinding:
+        prefix: --gtf_file
+    sbg:category: Input/output options
+    type:
+    - 'null'
+    - File
+-   id: te_gtf_file
+    inputBinding:
+        prefix: --te_gtf_file
+    sbg:category: Input/output options
+    type:
+    - 'null'
+    - File
+-   id: rnaindel_dir
+    inputBinding:
+        prefix: --rnaindel_dir
+    sbg:category: Input/output options
+    type:
+    - 'null'
+    - Directory
+-   id: ensembl_data_dir
+    inputBinding:
+        prefix: --ensembl_data_dir
+    sbg:category: Input/output options
+    type:
+    - 'null'
+    - Directory
+-   id: annovar_dir
+    inputBinding:
+        prefix: --annovar_dir
+    sbg:category: Input/output options
+    type:
+    - 'null'
+    - Directory
+-   doc: The Nextflow `publishDir` option specifies which intermediate files should
+        be saved to the output directory. This option tells the pipeline what method
+        should be used to move these files. See [Nextflow docs](https://www.nextflow.io/docs/latest/process.html#publishdir)
+        for details.
+    id: publish_dir_mode
+    inputBinding:
+        prefix: --publish_dir_mode
+    label: Method used to save pipeline results to output directory.
+    sbg:category: Generic options
+    sbg:hidden: true
+    sbg:icon: fas fa-copy
+    sbg:toolDefaultValue: copy
+    type:
+    - 'null'
+    -   name: publish_dir_mode
+        symbols:
+        - symlink
+        - rellink
+        - link
+        - copy
+        - copyNoFollow
+        - move
+        type: enum
+-   doc: An email address to send a summary email to when the pipeline is completed
+        - ONLY sent if the pipeline does not exit successfully.
+    id: email_on_fail
+    inputBinding:
+        prefix: --email_on_fail
+    label: Email address for completion summary, only when pipeline fails.
+    sbg:category: Generic options
+    sbg:hidden: true
+    sbg:icon: fas fa-exclamation-triangle
+    sbg:pattern: ^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$
+    type:
+    - 'null'
+    - string
+-   doc: Name of FASTA file
+    id: ref_genome_version
+    inputBinding:
+        prefix: --ref_genome_version
+    sbg:category: Reference file options
+    sbg:toolDefaultValue: hs38
+    type:
+    - 'null'
+    -   name: ref_genome_version
+        symbols:
+        - hs38
+        - hg19
+        type: enum
+-   id: reference_name
+    inputBinding:
+        prefix: --reference_name
+    sbg:category: Reference file options
+    sbg:hidden: true
+    sbg:toolDefaultValue: GRCh38_no_alt_analysis_set
+    type:
+    - 'null'
+    - string
+-   id: ensg2hgnc_file
+    inputBinding:
+        prefix: --ensg2hgnc_file
+    sbg:category: Reference file options
+    sbg:hidden: true
+    sbg:toolDefaultValue: ${projectDir}/assets/gencode_v41_ensg_hgnc.csv
+    type:
+    - 'null'
+    - string
+-   id: excluded_genes
+    inputBinding:
+        prefix: --excluded_genes
+    sbg:category: Reference file options
+    sbg:hidden: true
+    sbg:toolDefaultValue: ${projectDir}/assets/exclude_gene_ids.txt
+    type:
+    - 'null'
+    - string
+-   id: interval_list
+    inputBinding:
+        prefix: --interval_list
+    sbg:category: Reference file options
+    sbg:hidden: true
+    sbg:toolDefaultValue: ${projectDir}/assets/pathogenic_snps.bed
+    type:
+    - 'null'
+    - string
+-   id: ensg2hgnc_script
+    inputBinding:
+        prefix: --ensg2hgnc_script
+    sbg:category: Reference file options
+    sbg:hidden: true
+    sbg:toolDefaultValue: ensg2hgnc.py
+    type:
+    - 'null'
+    - string
+-   id: concat_fastq_script
+    inputBinding:
+        prefix: --concat_fastq_script
+    sbg:category: Reference file options
+    sbg:hidden: true
+    sbg:toolDefaultValue: concat_fastq.py
+    type:
+    - 'null'
+    - string
+-   id: allsorts_version
+    inputBinding:
+        prefix: --allsorts_version
+    sbg:category: Reference file options
+    sbg:hidden: true
+    sbg:toolDefaultValue: 0.2.0
+    type:
+    - 'null'
+    - string
+-   id: arriba_version
+    inputBinding:
+        prefix: --arriba_version
+    sbg:category: Reference file options
+    sbg:hidden: true
+    sbg:toolDefaultValue: 2.4.0
+    type:
+    - 'null'
+    - string
+-   doc: List of files not added as explicit workflow inputs but required for workflow
+        execution.
+    id: auxiliary_files
+    label: Auxiliary files
+    type:
+    - 'null'
+    -   items: File
+        type: array
+-   doc: Provide parameters through a JSON format input file.
+    id: params_file
+    inputBinding:
+        prefix: -params-file
+    label: Params files
+    sbg:fileTypes: JSON
+    type:
+    - 'null'
+    - File
+outputs:
+-   doc: This is a template output. You can modify the glob pattern to make outputs
+        more specific.
+    id: nf_publishdir
+    label: Publish Directory
+    outputBinding:
+        glob: '*'
+    type:
+    - 'null'
+    -   items: File
+        type: array
+requirements:
+-   class: InlineJavascriptRequirement
+sbg:revisionNotes: Uploaded using sbpack v2024.10.30
+sbg:toolAuthor: Angela Lin
