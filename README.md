@@ -25,6 +25,7 @@ A comprehensive RNA-Seq analysis pipeline built with [Nextflow](https://www.next
 2. **Clone the repository**:
    ```bash
    git clone git@github.com:CCICB/nf-carbonite.git
+   chmod +x nf-carbonite/bin/*
    ```
 3. **Prepare your samplesheet** (`samples.csv`)
 4. **Configure parameters** (`params.yaml`) 
