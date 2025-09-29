@@ -17,6 +17,7 @@ def checkPathParamList = [
     params.gtf_file,
     params.ensg2hgnc_file,
     params.excluded_genes,
+    params.interval_list,
 ]
 for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
 
@@ -163,11 +164,13 @@ workflow RNASEQ {
     GATK_SPLIT_CIGAR (
         PICARD.out.sorted_bam,
         params.star_dir,
+        params.interval_list
     )
 
     GATK_HAPLOTYPECALLER (
         GATK_SPLIT_CIGAR.out.gatk_bam,
         params.star_dir,
+        params.interval_list
     )
     
     // Run ANNOVAR only if directory is provided

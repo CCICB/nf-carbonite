@@ -1,16 +1,15 @@
 # Mandatory parameters
-genome_lib_dir : /path/to/ref/files/38/ctat_genome_lib_build_dir
-star_dir : /path/to/ref/files/38/STAR
-gtf_file : /path/to/ref/files/38/gencode.v41.annotation.gtf
+genome_lib_dir : /mnt/Rdrive/CB/genomes/hg38/total/ctat_genome_lib_build_dir
+star_dir : /mnt/Rdrive/CB/genomes/hg38/total/STAR
+gtf_file : /mnt/Rdrive/CB/genomes/hg38/total/gencode.v41.annotation.gtf
 ensg2hgnc_file: /path/to/ref/files/38/gencode_v41_ensg_hgnc.csv
 excluded_genes: /path/to/ref/files/38/exclude_genes.gencode_v41.txt
 
 
 # Optional parameters
-rnaindel_dir : /path/to/ref/files/38/data_dir_grch38
+rnaindel_dir : /mnt/Rdrive/CB/genomes/hg38/total/data_dir_grch38
 ensembl_data_dir : /path/to/ref/files/38/ensembl
-mixcr_license : /path/to/ref/files/38/mi.license
-te_gtf_file : /path/to/ref/files/38/GRCh38_GENCODE_rmsk_TE.gtf
+mixcr_license : /mnt/Rdrive/CB/genomes/hg38/total/mi.license
+te_gtf_file : /mnt/Rdrive/CB/genomes/hg38/total/GRCh38_GENCODE_rmsk_TE.gtf
 freebayes_interval_list: /path/to/ref/files/38/pathogenic_snps.bed
-mintie_dir : /path/to/ref/files/mintie-0.3.9-0/ref
-annovar_dir : /path/to/ref/files/38/annovar
+interval_list: /path/to/ref/files/38/interval_list.bed
