@@ -94,6 +94,7 @@ te_gtf_file: /path/to/ref/files/38/GRCh38_GENCODE_rmsk_TE.gtf       # Transposab
 freebayes_interval_list: /path/to/ref/files/38/pathogenic_snps.bed  # Interval list for targeted analysis (skips FREEBAYES if omitted)
 mintie_dir: /path/to/ref/files/mintie-0.3.9-0/ref                  # MINTIE reference directory (skips MINTIE if omitted)
 annovar_dir: /path/to/ref/files/38/annovar                          # ANNOVAR data directory (skips ANNOVAR if omitted)
+gatk_interval_list: /path/to/ref/files/38/gatk.interval_list        # GATK interval list (skips GATK_HAPLOTYPECALLER if omitted)
 ```
 
 > [!NOTE]
@@ -118,6 +119,7 @@ te_gtf_file: /path/to/ref/files/38/GRCh38_GENCODE_rmsk_TE.gtf
 freebayes_interval_list: /path/to/ref/files/38/pathogenic_snps.bed
 mintie_dir: /path/to/ref/files/mintie-0.3.9-0/ref
 annovar_dir: /path/to/ref/files/38/annovar
+gatk_interval_list: /path/to/ref/files/38/gatk.interval_list
 ```
 
 ## Running the Pipeline
