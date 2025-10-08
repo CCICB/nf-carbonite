@@ -12,5 +12,5 @@ mixcr_license: /path/to/ref/files/38/mi.license
 te_gtf_file: /path/to/ref/files/38/GRCh38_GENCODE_rmsk_TE.gtf
 freebayes_interval_list: /path/to/ref/files/38/pathogenic_snps.bed
 mintie_dir: /path/to/ref/files/mintie-0.3.9-0/ref
-gatk_interval_list: /path/to/ref/files/38/gatk.interval_list
 annovar_dir: /path/to/ref/files/38/annovar
+gatk_interval_list: /path/to/ref/files/38/gatk.interval_list
