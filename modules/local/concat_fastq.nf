@@ -9,7 +9,7 @@ process CONCAT_FASTQ {
     output:
     tuple val(rnaseq_id), path("*_all_R1.fastq.gz"),  path("*_all_R2.fastq.gz"), emit: fastq
 
-    script:
+    script: // concat_fastq.py is bundled with the pipeline, in /bin
     """
     concat_fastq.py ${directories} ${rnaseq_id}
     chmod +x run_concat.sh
