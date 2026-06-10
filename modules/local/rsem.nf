@@ -8,7 +8,6 @@ process RSEM {
     tuple val(rnaseq_id), path(transcriptome)
     path dir
     path ensg2hgnc_file
-    path excluded_genes
 
     output:
     tuple val(rnaseq_id), path("${rnaseq_id}_exp.${params.ref_genome_version}.genes.results")   , emit: genes
@@ -19,7 +18,7 @@ process RSEM {
     """
     rsem-calculate-expression --no-bam-output --num-threads 13 --bam --paired-end ${transcriptome} ${dir}/${params.reference_name} ${rnaseq_id}_exp.${params.ref_genome_version}
 
-    ensg2hgnc.py ${ensg2hgnc_file} ${excluded_genes} ${rnaseq_id}_exp.${params.ref_genome_version}.genes.results ${rnaseq_id}
+    ensg2hgnc.py ${ensg2hgnc_file} ${rnaseq_id}_exp.${params.ref_genome_version}.genes.results ${rnaseq_id}
 
     """
     

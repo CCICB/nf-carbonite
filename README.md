@@ -189,7 +189,7 @@ The pipeline integrates multiple specialized tools organized by analysis type:
 ### Variant Analysis
 - **[GATK HaplotypeCaller](https://gatk.broadinstitute.org/hc/en-us/sections/21904957852571-4-5-0-0)** (v4.5.0.0) - SNV/indel calling
 - **[FreeBayes](https://github.com/freebayes/freebayes)** (v1.3.6) - Variant calling *(hs38 only)*
-- **[RNAIndel](https://github.com/stjude/RNAIndel)** (v3.3.3) - RNA-specific indel detection
+- **[RNAIndel](https://github.com/stjude/RNAIndel)** (v3.3.0) - RNA-specific indel detection
 - **[ANNOVAR](https://annovar.openbioinformatics.org/en/latest/)** - Variant annotation
 
 ### Specialized Analyses
@@ -198,7 +198,7 @@ The pipeline integrates multiple specialized tools organized by analysis type:
 - **[MiXCR](https://github.com/milaboratory/mixcr)** (v4.3.2) - Immune repertoire analysis
 - **[Isofox](https://github.com/hartwigmedical/hmftools/tree/master/isofox)** (v1.7.1) - Isoform expression *(hs38 only)*
 - **[TEtranscripts](https://github.com/mhammell-laboratory/TEtranscripts.git)** (v2.2.1) - Transposable element analysis
-- **[MINTIE](https://github.com/Oshlack/MINTIE)** (v0.4.2) - Novel splice variant detection *(hs38 only)*
+- **[MINTIE](https://github.com/Oshlack/MINTIE)** (v0.3.9) - Novel splice variant detection *(hs38 only)*
 
 > [!NOTE]
 > **hs38-only tools**: FreeBayes, Isofox, and MINTIE analyses are only available when using `ref_genome_version: 'hs38'`
