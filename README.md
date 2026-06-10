@@ -75,7 +75,6 @@ genome_lib_dir: /path/to/ref/files/38/ctat_genome_lib_build_dir     # Path to ST
 star_dir: /path/to/ref/files/38/STAR                               # Path to STAR reference directory  
 gtf_file: /path/to/ref/files/38/gencode.v41.annotation.gtf         # Path to gene annotation GTF file
 ensg2hgnc_file: /path/to/ref/files/38/gencode_v41_ensg_hgnc.csv     # Path to ENSG to HGNC gene mapping file
-excluded_genes: /path/to/ref/files/38/exclude_genes.gencode_v41.txt # Path to file containing genes to exclude from analysis
 
 # Pipeline configuration (optional - defaults shown)
 reference_name: 'GRCh38_no_alt_analysis_set'  # Prefix of your .fa file (default: 'GRCh38_no_alt_analysis_set')
@@ -109,7 +108,6 @@ genome_lib_dir: /path/to/ref/files/38/ctat_genome_lib_build_dir
 star_dir: /path/to/ref/files/38/STAR
 gtf_file: /path/to/ref/files/38/gencode.v41.annotation.gtf
 ensg2hgnc_file: /path/to/ref/files/38/gencode_v41_ensg_hgnc.csv
-excluded_genes: /path/to/ref/files/38/exclude_genes.gencode_v41.txt
 
 # Optional parameters (include only what you need)
 rnaindel_dir: /path/to/ref/files/38/data_dir_grch38

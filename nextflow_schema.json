@@ -66,19 +66,13 @@
           "type": "string",
           "format": "file-path",
           "description": "Path to ENSG to HGNC gene mapping file"
-        },
-        "excluded_genes": {
-          "type": "string",
-          "format": "file-path",
-          "description": "Path to file containing genes to exclude from analysis"
         }
       },
       "required": [
         "genome_lib_dir",
         "star_dir",
         "gtf_file",
-        "ensg2hgnc_file",
-        "excluded_genes"
+        "ensg2hgnc_file"
       ]
     },
     "optional_reference_files": {
