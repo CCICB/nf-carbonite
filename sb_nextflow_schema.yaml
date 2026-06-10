@@ -38,8 +38,7 @@ doc: "# nf-carbonite\n\nA comprehensive RNA-Seq analysis pipeline built with [Ne
     \                               # Path to STAR reference directory  \ngtf_file:\
     \ /path/to/ref/files/38/gencode.v41.annotation.gtf         # Path to gene annotation\
     \ GTF file\nensg2hgnc_file: /path/to/ref/files/38/gencode_v41_ensg_hgnc.csv  \
-    \   # Path to ENSG to HGNC gene mapping file\nexcluded_genes: /path/to/ref/files/38/exclude_genes.gencode_v41.txt\
-    \ # Path to file containing genes to exclude from analysis\n\n# Pipeline configuration\
+    \   # Path to ENSG to HGNC gene mapping file\n\n# Pipeline configuration\
     \ (optional - defaults shown)\nreference_name: 'GRCh38_no_alt_analysis_set'  #\
     \ Prefix of your .fa file (default: 'GRCh38_no_alt_analysis_set')\nref_genome_version:\
     \ 'hs38'                     # Reference genome version: 'hs38' or 'hg19' (default:\
@@ -64,8 +63,7 @@ doc: "# nf-carbonite\n\nA comprehensive RNA-Seq analysis pipeline built with [Ne
     \ tool\n\n### Complete params.yaml Example\n```yaml\n# Mandatory parameters\n\
     genome_lib_dir: /path/to/ref/files/38/ctat_genome_lib_build_dir\nstar_dir: /path/to/ref/files/38/STAR\n\
     gtf_file: /path/to/ref/files/38/gencode.v41.annotation.gtf\nensg2hgnc_file: /path/to/ref/files/38/gencode_v41_ensg_hgnc.csv\n\
-    excluded_genes: /path/to/ref/files/38/exclude_genes.gencode_v41.txt\n\n# Optional\
-    \ parameters (include only what you need)\nrnaindel_dir: /path/to/ref/files/38/data_dir_grch38\n\
+    rnaindel_dir: /path/to/ref/files/38/data_dir_grch38\n\
     ensembl_data_dir: /path/to/ref/files/38/ensembl\nmixcr_license: /path/to/ref/files/38/mi.license\n\
     te_gtf_file: /path/to/ref/files/38/GRCh38_GENCODE_rmsk_TE.gtf\nfreebayes_interval_list:\
     \ /path/to/ref/files/38/pathogenic_snps.bed\nmintie_dir: /path/to/ref/files/mintie-0.3.9-0/ref\n\
@@ -220,14 +218,6 @@ inputs:
     inputBinding:
         prefix: --ensg2hgnc_file
     label: Path to ENSG to HGNC gene mapping file
-    sbg:category: Reference files
-    type:
-    - 'null'
-    - File
--   id: excluded_genes
-    inputBinding:
-        prefix: --excluded_genes
-    label: Path to file containing genes to exclude from analysis
     sbg:category: Reference files
     type:
     - 'null'

@@ -15,8 +15,7 @@ def checkPathParamList = [
     params.genome_lib_dir,
     params.star_dir,
     params.gtf_file,
-    params.ensg2hgnc_file,
-    params.excluded_genes,
+    params.ensg2hgnc_file
 ]
 for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
 
@@ -106,7 +105,6 @@ workflow RNASEQ {
         STAR_RSEM.out.transcriptome_bam, 
         params.star_dir,
         params.ensg2hgnc_file,
-        params.excluded_genes
     )
 
     PICARD (
