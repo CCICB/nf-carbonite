@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://raw.githubusercontent.com/nf-carbonite//nextflow_schema.json",
+  "$id": "https://raw.githubusercontent.com/CCICB/nf-carbonite/main/nextflow_schema.json",
   "title": "nf-carbonite pipeline parameters",
   "description": "Carbonite - An RNA-Seq analysis workflow",
   "type": "object",
@@ -20,7 +20,7 @@
           "mimetype": "text/csv",
           "pattern": "^\\S+\\.csv$",
           "description": "Path to comma-separated file containing information about the samples in the experiment.",
-          "help_text": "You will need to create a design file with information about the samples in your experiment before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row.",
+          "help_text": "A CSV with a header row `rnaseq_id,directories`. `rnaseq_id` is a unique sample identifier; `directories` is the path to a directory containing that sample's FASTQ files.",
           "fa_icon": "fas fa-file-csv"
         },
         "outdir": {
@@ -31,97 +31,142 @@
         },
         "reference_name": {
           "type": "string",
-          "default": "GRCh38_no_alt_analysis_set"
+          "default": "GRCh38_no_alt_analysis_set",
+          "description": "Prefix of the reference FASTA file inside star_dir (e.g. GRCh38_no_alt_analysis_set for GRCh38_no_alt_analysis_set.fa)."
         },
         "ref_genome_version": {
           "type": "string",
           "default": "hs38",
-          "enum": ["hs38", "hg19"]
+          "enum": ["hs38", "hg19"],
+          "description": "Reference genome version. FreeBayes, Isofox and MINTIE only run with hs38."
         }
       }
     },
     "reference_files": {
       "title": "Reference files",
       "type": "object",
-      "description": "",
-      "default": "",
+      "description": "Mandatory reference files.",
+      "required": ["genome_lib_dir", "star_dir", "gtf_file", "ensg2hgnc_file"],
       "properties": {
         "genome_lib_dir": {
           "type": "string",
           "format": "directory-path",
-          "description": "Path to STAR genome library directory"
+          "exists": true,
+          "description": "Path to the CTAT genome library directory (STAR-Fusion)."
         },
         "star_dir": {
           "type": "string",
           "format": "directory-path",
-          "description": "Path to STAR reference directory"
+          "exists": true,
+          "description": "Path to the STAR reference directory (also contains <reference_name>.fa)."
         },
         "gtf_file": {
           "type": "string",
           "format": "file-path",
-          "pattern": "^\\\\S+\\\\.gtf(\\\\.gz)?$",
-          "description": "Path to gene annotation GTF file"
+          "exists": true,
+          "pattern": "^\\S+\\.gtf(\\.gz)?$",
+          "description": "Path to gene annotation GTF file."
         },
         "ensg2hgnc_file": {
           "type": "string",
           "format": "file-path",
-          "description": "Path to ENSG to HGNC gene mapping file"
+          "exists": true,
+          "description": "Path to ENSG to HGNC gene mapping CSV file."
         }
-      },
-      "required": [
-        "genome_lib_dir",
-        "star_dir",
-        "gtf_file",
-        "ensg2hgnc_file"
-      ]
+      }
     },
     "optional_reference_files": {
       "title": "Optional reference files",
       "type": "object",
-      "description": "Optional parameters that can be provided to customize the analysis",
-      "default": "",
+      "description": "Optional parameters that can be provided to customize the analysis. Omitting a parameter skips the corresponding tool.",
       "properties": {
         "rnaindel_dir": {
           "type": "string",
           "format": "directory-path",
-          "description": "Path to RNA-indel data directory (optional - if not provided, RNAINDEL analysis will be skipped)"
+          "exists": true,
+          "description": "Path to RNAIndel data directory (optional - if not provided, RNAINDEL analysis will be skipped)."
         },
         "ensembl_data_dir": {
           "type": "string",
           "format": "directory-path",
-          "description": "Path to Ensembl data directory (optional - if not provided, ISOFOX analysis will be skipped)"
+          "exists": true,
+          "description": "Path to Ensembl data directory (optional - if not provided, ISOFOX analysis will be skipped)."
         },
         "mixcr_license": {
           "type": "string",
           "format": "file-path",
-          "description": "Path to MiXCR license file (optional - if not provided, MIXCR analysis will be skipped)"
+          "exists": true,
+          "description": "Path to MiXCR license file (optional - if not provided, MIXCR analysis will be skipped)."
         },
         "te_gtf_file": {
           "type": "string",
           "format": "file-path",
-          "description": "Path to transposable element GTF file (optional - if not provided, TECOUNT analysis will be skipped)",
-          "pattern": "^\\\\S+\\\\.gtf(\\\\.gz)?$"
+          "exists": true,
+          "pattern": "^\\S+\\.gtf(\\.gz)?$",
+          "description": "Path to transposable element GTF file (optional - if not provided, TECOUNT analysis will be skipped)."
         },
         "freebayes_interval_list": {
           "type": "string",
           "format": "file-path",
-          "description": "Optional interval list for targeted analysis (if not provided, FREEBAYES analysis will be skipped)",
-          "pattern": "^\\\\S+\\\\.bed(\\\\.gz)?$"
+          "exists": true,
+          "pattern": "^\\S+\\.bed(\\.gz)?$",
+          "description": "Optional BED interval list for targeted analysis (if not provided, FREEBAYES analysis will be skipped)."
         },
         "mintie_dir": {
           "type": "string",
           "format": "directory-path",
-          "description": "Path to MINTIE reference directory (optional - if not provided, MINTIE analysis will be skipped)"
+          "exists": true,
+          "description": "Path to MINTIE reference directory (optional - if not provided, MINTIE analysis will be skipped)."
         },
         "annovar_dir": {
           "type": "string",
           "format": "directory-path",
-          "description": "Path to ANNOVAR data directory (optional - if not provided, ANNOVAR analysis will be skipped)"
+          "exists": true,
+          "description": "Path to ANNOVAR data directory (optional - if not provided, ANNOVAR analysis will be skipped)."
         },
         "gatk_interval_list": {
           "type": "string",
           "format": "file-path",
-          "description": "Optional interval list for targeted analysis in GATK Haplotypecaller"
+          "exists": true,
+          "description": "Optional interval list for targeted analysis in GATK HaplotypeCaller."
+        }
+      }
+    },
+    "generic_options": {
+      "title": "Generic options",
+      "type": "object",
+      "description": "Less common options for typical pipeline runs.",
+      "properties": {
+        "version": {
+          "type": "boolean",
+          "default": false,
+          "hidden": true,
+          "description": "Display pipeline version and exit."
+        },
+        "publish_dir_mode": {
+          "type": "string",
+          "default": "copy",
+          "hidden": true,
+          "enum": ["symlink", "rellink", "link", "copy", "copyNoFollow", "move"],
+          "description": "Method used by publishDir to save results."
+        },
+        "tracedir": {
+          "type": "string",
+          "default": null,
+          "hidden": true,
+          "description": "Directory for execution reports (defaults to <outdir>/pipeline_info)."
+        },
+        "allsorts_version": {
+          "type": "string",
+          "default": "0.2.0",
+          "hidden": true,
+          "description": "ALLSorts model version passed to the ALLSorts container."
+        },
+        "arriba_version": {
+          "type": "string",
+          "default": "2.4.0",
+          "hidden": true,
+          "description": "Arriba version used to locate the database files bundled in the Arriba container."
         }
       }
     }
@@ -135,6 +180,9 @@
     },
     {
       "$ref": "#/$defs/optional_reference_files"
+    },
+    {
+      "$ref": "#/$defs/generic_options"
     }
   ]
 }

@@ -11,9 +11,10 @@ process ARRIBA {
     path "${rnaseq_id}_arribaFusions.${params.ref_genome_version}.tsv" , emit: tsv
     path "${rnaseq_id}_arribaFusions.${params.ref_genome_version}.discarded.tsv" , emit: discarded_tsv
     path "${rnaseq_id}_fusions.${params.ref_genome_version}.pdf" , emit: arriba_df
+    path "versions.yml", emit: versions
 
     script:
-    def file_ref_name = (params.ref_genome_version == 'hg19') 
+    def file_ref_name = (params.ref_genome_version == 'hg19')
         ? "hg19_hs37d5_GRCh37"
         : "hg38_GRCh38"
 
@@ -33,5 +34,22 @@ process ARRIBA {
         --cytobands=/arriba_v${params.arriba_version}/database/cytobands_${file_ref_name}_v${params.arriba_version}.tsv \\
         --proteinDomains=/arriba_v${params.arriba_version}/database/protein_domains_${file_ref_name}_v${params.arriba_version}.gff3 \\
         --output=${rnaseq_id}_fusions.${params.ref_genome_version}.pdf
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        arriba: ${params.arriba_version}
+    END_VERSIONS
+    """
+
+    stub:
+    """
+    touch ${rnaseq_id}_arribaFusions.${params.ref_genome_version}.tsv
+    touch ${rnaseq_id}_arribaFusions.${params.ref_genome_version}.discarded.tsv
+    touch ${rnaseq_id}_fusions.${params.ref_genome_version}.pdf
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        arriba: stub
+    END_VERSIONS
     """
 }

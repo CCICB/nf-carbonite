@@ -1,5 +1,3 @@
-nextflow.enable.dsl=2
-
 process ALLSORTS {
     tag "$rnaseq_id"
     publishDir "${params.outdir}/${rnaseq_id}/allsorts", mode: 'copy'
@@ -14,6 +12,7 @@ process ALLSORTS {
         path "${rnaseq_id}.allsorts.waterfalls.png", emit: waterfalls_png, optional: true
         path "${rnaseq_id}.allsorts.distributions.png", emit: distributions_png, optional: true
         path "${rnaseq_id}.allsorts.probabilities.csv", emit: probabilities_csv, optional: true
+        path "versions.yml", emit: versions
 
     script:
     """
@@ -21,11 +20,27 @@ process ALLSORTS {
     export NUMBA_CACHE_DIR=\${PWD}/.numba_cache
     export PYTHONNOUSERSITE=1
     export PYTHONUNBUFFERED=1
-    
+
     # Clear any cached Python modules
     rm -rf ~/.cache/pip
     mkdir -p \${PWD}/.numba_cache
-    
+
     /app/run_allsorts.sh --vers=${params.allsorts_version} --gene_results=${genes} --rnaseq_id=${rnaseq_id}
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        allsorts: ${params.allsorts_version}
+    END_VERSIONS
+    """
+
+    stub:
+    """
+    touch ${rnaseq_id}.allsorts.predictions.csv
+    touch ${rnaseq_id}.allsorts.probabilities.csv
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        allsorts: stub
+    END_VERSIONS
     """
 }

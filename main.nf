@@ -1,24 +1,15 @@
 #!/usr/bin/env nextflow
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    nf-core/rnaseq
+    nf-carbonite
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     Github : https://github.com/CCICB/nf-carbonite
-    Website: https://nf-co.re/rnaseq
-    Slack  : https://nfcore.slack.com/channels/rnaseq
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ----------------------------------------------------------------------------------------
 */
 
-nextflow.enable.dsl = 2
-
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    VALIDATE & PRINT PARAMETER SUMMARY
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
-
-WorkflowMain.initialise(workflow, params, log)
+include { validateParameters; paramsSummaryLog } from 'plugin/nf-schema'
+include { MAIN } from './workflows/carbonite'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -26,11 +17,6 @@ WorkflowMain.initialise(workflow, params, log)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { MAIN as MAIN} from './workflows/carbonite'
-
-//
-// WORKFLOW: Run main nf-core/rnaseq analysis pipeline
-//
 workflow CARBONITE {
     MAIN ()
 }
@@ -41,17 +27,28 @@ workflow CARBONITE {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-//
-// WORKFLOW: Execute a single named workflow for the pipeline
-// See: https://github.com/nf-core/rnaseq/issues/619
-//
-
 workflow {
+    // Print version and exit on --version
+    if (params.version) {
+        log.info "${workflow.manifest.name} v${workflow.manifest.version}"
+        System.exit(0)
+    }
+
+    // Validate parameters and the samplesheet against nextflow_schema.json /
+    // assets/schema_input.json, failing early with a clear message on bad input.
+    // --help is handled automatically by the nf-schema plugin (see the
+    // validation block in nextflow.config).
+    validateParameters()
+
+    // Print a summary of the non-default parameters
+    log.info paramsSummaryLog(workflow)
+
     CARBONITE ()
 }
 
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    THE END
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
+workflow.onComplete {
+    log.info "${workflow.manifest.name} ${workflow.success ? 'completed successfully' : 'finished with errors'} after ${workflow.duration}"
+    if (!workflow.success && workflow.errorReport) {
+        log.info "Error report:\n${workflow.errorReport}"
+    }
+}

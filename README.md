@@ -21,7 +21,7 @@ A comprehensive RNA-Seq analysis pipeline built with [Nextflow](https://www.next
 
 ## Quick Start
 
-1. **Install Nextflow** (>=24.04.0)
+1. **Install Nextflow** (>=24.10.0)
 2. **Clone the repository**:
    ```bash
    git clone git@github.com:CCICB/nf-carbonite.git
@@ -34,9 +34,15 @@ A comprehensive RNA-Seq analysis pipeline built with [Nextflow](https://www.next
 ## Requirements
 
 ### System Requirements
-- **Nextflow** (>=24.04.0)
+- **Nextflow** (>=24.10.0)
 - **Container system**: Docker or Singularity
 - **Reference files**: See [Configuring Parameters](#configuring-parameters) section
+
+> [!TIP]
+> Parameters and the samplesheet are validated against a schema before anything runs,
+> so bad input fails immediately with a clear message. Run the pipeline with `--help`
+> for a full parameter listing. See [docs/usage.md](docs/usage.md) for details,
+> including a note on pre-installing the nf-schema plugin for offline HPC systems.
 
 ### Compatible Environments
 Successfully tested on:
@@ -201,6 +207,26 @@ The pipeline integrates multiple specialized tools organized by analysis type:
 > [!NOTE]
 > **hs38-only tools**: FreeBayes, Isofox, and MINTIE analyses are only available when using `ref_genome_version: 'hs38'`
 
+
+## Testing
+
+A fast smoke test of the workflow wiring, using the bundled dummy data and process
+stubs (no containers or real reference files needed). Run from the repository root:
+
+```bash
+nextflow run . -profile test -stub-run --outdir test_results
+```
+
+With [nf-test](https://www.nf-test.com) installed, the same check runs as an assertion-based test via `nf-test test`.
+
+## Documentation
+
+- [docs/usage.md](docs/usage.md) — samplesheet format, parameters, profiles, offline plugin install
+- [docs/output.md](docs/output.md) — what lands where in `--outdir`
+- [CITATIONS.md](CITATIONS.md) — references for every tool in the pipeline
+
+Each run also writes `pipeline_info/software_versions.yml` to the output directory,
+recording the version of every tool that actually executed.
 
 ## Credits & Acknowledgments
 

@@ -52,3 +52,10 @@ Thumbs.db
 # Nextflow files
 .nextflow*
 work/
+
+# nf-test files
+.nf-test/
+.nf-test.log
+
+# Local test-run output
+test_results/

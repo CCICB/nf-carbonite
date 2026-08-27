@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/CCICB/nf-carbonite/main/assets/schema_input.json",
+  "title": "nf-carbonite pipeline - params.input schema",
+  "description": "Schema for the samplesheet file provided with params.input",
+  "type": "array",
+  "uniqueEntries": ["rnaseq_id"],
+  "items": {
+    "type": "object",
+    "properties": {
+      "rnaseq_id": {
+        "type": "string",
+        "pattern": "^\\S+$",
+        "errorMessage": "rnaseq_id must be provided and cannot contain spaces"
+      },
+      "directories": {
+        "type": "string",
+        "format": "directory-path",
+        "exists": true,
+        "errorMessage": "directories must be an existing directory containing the sample's FASTQ files"
+      }
+    },
+    "required": ["rnaseq_id", "directories"]
+  }
+}

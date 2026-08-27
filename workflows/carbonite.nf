@@ -1,33 +1,4 @@
-nextflow.enable.dsl=2
-
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    VALIDATE INPUTS
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
-
-// Check mandatory parameters
-if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input samplesheet not specified! Please specify using -i' }
-
-def checkPathParamList = [
-    params.input,
-    params.outdir,
-    params.genome_lib_dir,
-    params.star_dir,
-    params.gtf_file,
-    params.ensg2hgnc_file
-]
-for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
-
-// Check optional parameters
-if (params.te_gtf_file) { file(params.te_gtf_file, checkIfExists: true) }
-if (params.rnaindel_dir) { file(params.rnaindel_dir, checkIfExists: true) }
-if (params.ensembl_data_dir) { file(params.ensembl_data_dir, checkIfExists: true) }
-if (params.mixcr_license) { file(params.mixcr_license, checkIfExists: true) }
-if (params.mintie_dir) { file(params.mintie_dir, checkIfExists: true) }
-if (params.freebayes_interval_list) { file(params.freebayes_interval_list, checkIfExists: true) }
-if (params.gatk_interval_list) { file(params.gatk_interval_list, checkIfExists: true) }
-if (params.annovar_dir) { file(params.annovar_dir, checkIfExists: true) }
+include { samplesheetToList } from 'plugin/nf-schema'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -67,25 +38,30 @@ workflow RNASEQ {
     take:
     fastq
 
-    main: 
+    main:
+    ch_versions = Channel.empty()
+
     // Run MIXCR only if license is provided
     if (params.mixcr_license) {
         MIXCR (
             fastq,
             params.mixcr_license,
         )
+        ch_versions = ch_versions.mix(MIXCR.out.versions.first())
     }
 
     STARFUSION (
         fastq,
         params.genome_lib_dir
     )
+    ch_versions = ch_versions.mix(STARFUSION.out.versions.first())
 
     //  STAR FOR RSEM
     STAR_RSEM (
         fastq,
         params.star_dir,
     )
+    ch_versions = ch_versions.mix(STAR_RSEM.out.versions.first())
 
     // STAR FOR TE - only if TE GTF file is provided
     if (params.te_gtf_file) {
@@ -99,23 +75,27 @@ workflow RNASEQ {
             params.gtf_file,
             STAR_TE.out.aligned_bam
         )
+        ch_versions = ch_versions.mix(TECOUNT.out.versions.first())
     }
 
     RSEM (
-        STAR_RSEM.out.transcriptome_bam, 
+        STAR_RSEM.out.transcriptome_bam,
         params.star_dir,
         params.ensg2hgnc_file,
     )
+    ch_versions = ch_versions.mix(RSEM.out.versions.first())
 
     PICARD (
-        STAR_RSEM.out.aligned_bam, 
+        STAR_RSEM.out.aligned_bam,
     )
+    ch_versions = ch_versions.mix(PICARD.out.versions.first())
 
     ARRIBA (
         params.star_dir,
         params.gtf_file,
         STAR_RSEM.out.aligned_bam.join(PICARD.out.sorted_bam, by: [0], remainder: false)
     )
+    ch_versions = ch_versions.mix(ARRIBA.out.versions.first())
 
     // Run RNAINDEL only if directory is provided
     if (params.rnaindel_dir) {
@@ -124,6 +104,7 @@ workflow RNASEQ {
             params.star_dir,
             params.rnaindel_dir
         )
+        ch_versions = ch_versions.mix(RNAINDEL.out.versions.first())
     }
 
     if (params.ref_genome_version != 'hg19'){
@@ -134,8 +115,9 @@ workflow RNASEQ {
                 params.star_dir,
                 params.freebayes_interval_list
             )
+            ch_versions = ch_versions.mix(FREEBAYES.out.versions.first())
         }
-        
+
         // Run ISOFOX only if Ensembl data directory is provided
         if (params.ensembl_data_dir) {
             ISOFOX (
@@ -143,75 +125,63 @@ workflow RNASEQ {
                 params.star_dir,
                 params.ensembl_data_dir
             )
+            ch_versions = ch_versions.mix(ISOFOX.out.versions.first())
         }
-        
+
         // Run MINTIE only if directory is provided
         if (params.mintie_dir){
             MINTIE(
                 fastq
-            ) 
+            )
+            ch_versions = ch_versions.mix(MINTIE.out.versions.first())
         }
-    } 
+    }
     ALLSORTS (
         RSEM.out.named_genes
     )
+    ch_versions = ch_versions.mix(ALLSORTS.out.versions.first())
+
     TALLSORTS (
         RSEM.out.named_genes
     )
+    ch_versions = ch_versions.mix(TALLSORTS.out.versions.first())
 
     GATK_SPLIT_CIGAR (
         PICARD.out.sorted_bam,
         params.star_dir,
         params.gatk_interval_list
     )
+    ch_versions = ch_versions.mix(GATK_SPLIT_CIGAR.out.versions.first())
 
     GATK_HAPLOTYPECALLER (
         GATK_SPLIT_CIGAR.out.gatk_bam,
         params.star_dir,
         params.gatk_interval_list
     )
-    
+    ch_versions = ch_versions.mix(GATK_HAPLOTYPECALLER.out.versions.first())
+
     // Run ANNOVAR only if directory is provided
     if (params.annovar_dir) {
         ANNOVAR (
             params.annovar_dir,
             GATK_HAPLOTYPECALLER.out.vcf
         )
+        ch_versions = ch_versions.mix(ANNOVAR.out.versions.first())
     }
 
+    emit:
+    versions = ch_versions
 }
 
-// Info required for completion email and summary
-def pass_percent_mapped = [:]
-def fail_percent_mapped = [:]
-
-
 workflow MAIN {
-    params.each{ k, v -> println "${k}:${v}" }
-    samples = Channel
-        .fromPath(params.input)
-        .splitCsv(header:true)
-        .map{ row-> tuple(row.rnaseq_id, row.directories) }
-
-    samples.view()
-    println("Workflow Engine: " +  workflow.containerEngine)
+    // Validated against assets/schema_input.json; each row arrives as [ rnaseq_id, directories ]
+    samples = Channel.fromList(samplesheetToList(params.input, "${projectDir}/assets/schema_input.json"))
 
     CONCAT_FASTQ(samples)
     RNASEQ(CONCAT_FASTQ.out.fastq)
+
+    // Collate the versions.yml emitted by every process into a single file
+    CONCAT_FASTQ.out.versions.first()
+        .mix(RNASEQ.out.versions)
+        .collectFile(name: 'software_versions.yml', storeDir: "${params.outdir}/pipeline_info", sort: true)
 }
-
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    COMPLETION EMAIL AND SUMMARY
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
-
-workflow.onComplete {
-    NfcoreTemplate.summary(workflow, params, log, fail_percent_mapped, pass_percent_mapped)
-}
-
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    THE END
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/

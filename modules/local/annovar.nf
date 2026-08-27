@@ -1,5 +1,3 @@
-nextflow.enable.dsl=2
-
 process ANNOVAR {
     tag "$rnaseq_id"
     publishDir "${params.outdir}/${rnaseq_id}/gatk", mode: 'copy'
@@ -10,6 +8,7 @@ process ANNOVAR {
 
     output:
     tuple val(rnaseq_id), path("${rnaseq_id}*.haplotypecaller.multianno.vcf"), emit: vcf, optional: false
+    path "versions.yml", emit: versions
 
     script:
     def buildver = (params.ref_genome_version == 'hg19') ? 'hg19' : 'hg38'
@@ -25,6 +24,20 @@ process ANNOVAR {
     -vcfinput
 
     mv ${rnaseq_id}.${buildver}_multianno.vcf ${rnaseq_id}.${params.ref_genome_version}.haplotypecaller.multianno.vcf
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        annovar: \$(perl /app/table_annovar.pl 2>&1 | grep -m 1 -o 'Version:.*' || echo 'see container digest pinned in conf/base.config')
+    END_VERSIONS
     """
-    
+
+    stub:
+    """
+    touch ${rnaseq_id}.${params.ref_genome_version}.haplotypecaller.multianno.vcf
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        annovar: stub
+    END_VERSIONS
+    """
 }

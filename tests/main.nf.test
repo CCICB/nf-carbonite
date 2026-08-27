@@ -1,0 +1,22 @@
+nextflow_pipeline {
+
+    name "nf-carbonite smoke test"
+    script "main.nf"
+
+    test("stub run completes with the bundled test profile") {
+
+        options "-stub-run"
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+        }
+
+        then {
+            assert workflow.success
+            // versions collation is written to <outdir>/pipeline_info
+            assert new File("$outputDir/pipeline_info/software_versions.yml").exists()
+        }
+    }
+}

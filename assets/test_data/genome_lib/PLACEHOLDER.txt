@@ -1,0 +1,2 @@
+Placeholder so this directory exists in git. The test profile only exercises
+parameter validation and -stub-run; no real CTAT genome library is needed.

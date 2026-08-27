@@ -9,6 +9,7 @@ process ISOFOX {
 
     output:
     path "*.csv" , emit: isofox_output
+    path "versions.yml", emit: versions
 
     script:
     def avail_mem = (task.memory.giga*0.9).intValue()
@@ -20,7 +21,7 @@ process ISOFOX {
     -read_length 151 \
     -long_frag_limit 550 \
     -known_fusion_file /app/known_fusion_data.38.csv \
-    -threads 10 \
+    -threads ${task.cpus} \
     -run_perf_checks \
     -exp_counts_file /app/read_151_exp_counts.csv \
     -exp_gc_ratios_file /app/read_100_exp_gc_ratios.csv \
@@ -28,5 +29,21 @@ process ISOFOX {
     -ensembl_data_dir ${ensembl} \
     -ref_genome ${star}/${params.reference_name}.fa \
     -sample ${rnaseq_id} -functions 'TRANSCRIPT_COUNTS;ALT_SPLICE_JUNCTIONS;FUSIONS'
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        isofox: 1.7.1
+    END_VERSIONS
+    """
+    // isofox version above mirrors the container tag pinned in conf/base.config
+
+    stub:
+    """
+    touch ${rnaseq_id}.isofox.summary.csv
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        isofox: stub
+    END_VERSIONS
     """
 }

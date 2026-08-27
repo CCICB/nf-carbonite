@@ -1,6 +1,3 @@
-#!/usr/bin/env nextflow
-nextflow.enable.dsl=2
-
 process MINTIE {
     tag "$rnaseq_id"
     publishDir "${params.outdir}", mode: 'copy'
@@ -10,11 +7,12 @@ process MINTIE {
     tuple val(rnaseq_id), path(fastq1), path(fastq2)
 
     output:
-    path "./${rnaseq_id}/${rnaseq_id}_results.tsv"
+    path "./${rnaseq_id}/${rnaseq_id}_results.tsv", emit: results
+    path "versions.yml", emit: versions
 
-    script: 
+    script:
     def paramMap = [
-        threads : 8,
+        threads : task.cpus,
         assembly_mem : 128,
         assembler : 'soap',
         scores : 33,
@@ -51,7 +49,21 @@ EOF
     export PBS_O_WORKDIR=$PWD
     export PBS_O_HOME=$PWD
     mintie -w -p params.txt `ls *.fastq.gz`
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        mintie: \$(mintie --version 2>/dev/null | head -n 1 || echo unknown)
+    END_VERSIONS
+    """
+
+    stub:
+    """
+    mkdir -p ${rnaseq_id}
+    touch ${rnaseq_id}/${rnaseq_id}_results.tsv
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        mintie: stub
+    END_VERSIONS
     """
 }
-
-
