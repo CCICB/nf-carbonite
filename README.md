@@ -53,7 +53,7 @@ Successfully tested on:
 ## Input Preparation
 
 ### Sample Sheet Format
-Create a CSV file (`samples.csv`) with your sample information:
+`--input` takes a CSV with a header row and one row per sample:
 
 ```csv
 rnaseq_id,directories
@@ -62,11 +62,14 @@ XYZ987,/path/to/fastq/files/XYZ987
 DEF456,/path/to/fastq/files/DEF456
 ```
 
-**Format details:**
-- **Header required**: `rnaseq_id,directories`
-- **rnaseq_id**: Unique sample identifier
-- **directories**: Full path to directory containing FASTQ files for that sample
-- **Multiple samples**: Each sample runs as a separate pipeline execution
+| Column        | Description                                                                                                  |
+| ------------- | ------------------------------------------------------------------------------------------------------------ |
+| `rnaseq_id`   | Unique sample identifier. No spaces. Used as the prefix for all output files.                                 |
+| `directories` | Path to an existing directory containing that sample's FASTQ files (`*_R1*.gz` / `*_R2*.gz`, paired-end).     |
+
+The samplesheet is validated against [`assets/schema_input.json`](../assets/schema_input.json)
+before anything runs: missing columns, duplicate IDs, or non-existent directories fail
+immediately with a clear message.
 
 ## Configuring Parameters
 
@@ -207,6 +210,17 @@ The pipeline integrates multiple specialized tools organized by analysis type:
 > [!NOTE]
 > **hs38-only tools**: FreeBayes, Isofox, and MINTIE analyses are only available when using `ref_genome_version: 'hs38'`
 
+## Profiles
+
+| Profile                | Purpose                                                       |
+| ---------------------- | ------------------------------------------------------------- |
+| `docker`               | Run all processes in Docker containers                        |
+| `singularity`          | Run all processes in Singularity containers                   |
+| `test`                 | Bundled dummy data for smoke-testing the pipeline wiring      |
+| `local`                | Small local overrides                                         |
+| `nci`, `pawsey`        | Site profiles for NCI Gadi and Pawsey Setonix (edit the `<project_id>` placeholders first) |
+| `cavatica`, `tower`, `s3`, `arm`, `debug` | Platform-specific settings                 |
+
 
 ## Testing
 
@@ -219,9 +233,17 @@ nextflow run . -profile test -stub-run --outdir test_results
 
 With [nf-test](https://www.nf-test.com) installed, the same check runs as an assertion-based test via `nf-test test`.
 
+## Resource handling
+
+Default per-process resources live in [`conf/base.config`](../conf/base.config). Processes
+that fail with out-of-memory or other transient errors (exit codes 130–145, 104) are
+retried up to twice with escalating memory. `resourceLimits` caps requests so retries
+never exceed what the environment can schedule; site profiles override the cap for
+their clusters. Tools take their thread counts from `task.cpus`, so overriding
+`cpus` in a config automatically adjusts tool threading.
+
 ## Documentation
 
-- [docs/usage.md](docs/usage.md) — samplesheet format, parameters, profiles, offline plugin install
 - [docs/output.md](docs/output.md) — what lands where in `--outdir`
 - [CITATIONS.md](CITATIONS.md) — references for every tool in the pipeline
 
