@@ -35,16 +35,16 @@
 - [FreeBayes](https://arxiv.org/abs/1207.3907)
   > Garrison E, Marth G. Haplotype-based variant detection from short-read sequencing. arXiv preprint arXiv:1207.3907. 2012.
 
-- [RNAIndel](https://pubmed.ncbi.nlm.nih.gov/31504206/)
-  > Hagiwara K, Ding L, Edmonson MN, Rice SV, Newman S, Meshinchi S, Ries RE, Rusch M, Zhang J. RNAIndel: discovering somatic coding indels from tumor RNA-Seq data. Bioinformatics. 2020 Mar 1;36(5):1382-1390. doi: 10.1093/bioinformatics/btz753.
+- [RNAIndel](https://pubmed.ncbi.nlm.nih.gov/31593214/)
+  > Hagiwara K, Ding L, Edmonson MN, Rice SV, Newman S, Easton J, Dai J, Meshinchi S, Ries RE, Rusch M, Zhang J. RNAIndel: discovering somatic coding indels from tumor RNA-Seq data. Bioinformatics. 2020 Mar 1;36(5):1382-1390. doi: 10.1093/bioinformatics/btz753. Erratum in: Bioinformatics. 2020 Aug 15;36(14):4231. doi: 10.1093/bioinformatics/btaa247. PMID: 31593214; PMCID: PMC7523641.
 
 - [ANNOVAR](https://pubmed.ncbi.nlm.nih.gov/20601685/)
   > Wang K, Li M, Hakonarson H. ANNOVAR: functional annotation of genetic variants from high-throughput sequencing data. Nucleic Acids Res. 2010 Sep;38(16):e164. doi: 10.1093/nar/gkq603.
 
 ## Specialized analyses
 
-- [ALLSorts](https://pubmed.ncbi.nlm.nih.gov/35075486/)
-  > Schmidt B, Brown LM, Ryland GL, Lonsdale A, Kosasih HJ, Ludlow LE, Majewski IJ, Blombery P, Ekert PG, Davidson NM, Oshlack A. ALLSorts: an RNA-Seq subtype classifier for B-cell acute lymphoblastic leukemia. Blood Adv. 2022 Jul 26;6(14):4093-4097. doi: 10.1182/bloodadvances.2021005894.
+- [ALLSorts](https://pubmed.ncbi.nlm.nih.gov/35482550/)
+  > Schmidt B, Brown LM, Ryland GL, Lonsdale A, Kosasih HJ, Ludlow LE, Majewski IJ, Blombery P, Ekert PG, Davidson NM, Oshlack A. ALLSorts: an RNA-Seq subtype classifier for B-cell acute lymphoblastic leukemia. Blood Adv. 2022 Jul 26;6(14):4093-4097. doi: 10.1182/bloodadvances.2021005894. PMID: 35482550; PMCID: PMC9327546.
 
 - [TALLSorts](https://github.com/Oshlack/TALLSorts)
   > Oshlack lab. TALLSorts: a T-ALL subtype classifier. https://github.com/Oshlack/TALLSorts
