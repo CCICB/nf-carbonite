@@ -295,6 +295,32 @@ inputs:
     type:
     - 'null'
     - File
+-   id: run_allsorts
+    inputBinding:
+        prefix: --run_allsorts
+    label: Run ALLSorts B-ALL subtype classification (set to false to skip)
+    sbg:category: Tool toggles
+    sbg:toolDefaultValue: 'true'
+    type:
+    - 'null'
+    -   name: run_allsorts
+        symbols:
+        - 'true'
+        - 'false'
+        type: enum
+-   id: run_tallsorts
+    inputBinding:
+        prefix: --run_tallsorts
+    label: Run TALLSorts T-ALL subtype classification (set to false to skip)
+    sbg:category: Tool toggles
+    sbg:toolDefaultValue: 'true'
+    type:
+    - 'null'
+    -   name: run_tallsorts
+        symbols:
+        - 'true'
+        - 'false'
+        type: enum
 -   doc: List of files not added as explicit workflow inputs but required for workflow
         execution.
     id: auxiliary_files

@@ -167,6 +167,16 @@
           "default": "2.4.0",
           "hidden": true,
           "description": "Arriba version used to locate the database files bundled in the Arriba container."
+        },
+        "run_allsorts": {
+          "type": "boolean",
+          "default": true,
+          "description": "Run ALLSorts B-ALL subtype classification (set to false to skip)."
+        },
+        "run_tallsorts": {
+          "type": "boolean",
+          "default": true,
+          "description": "Run TALLSorts T-ALL subtype classification (set to false to skip)."
         }
       }
     }
