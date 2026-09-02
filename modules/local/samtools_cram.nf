@@ -12,13 +12,21 @@ process SAMTOOLS_CRAM {
 
     script:
     def output_cram = sorted_bam.name.replaceAll(/\.bam$/, '.cram')
+    def reference   = "${star}/${params.reference_name}.fa"
+    def args        = "-C -O cram,embed_ref=1,version=3.0,reference=${reference}"
     """
-    samtools view -C -T ${star}/${params.reference_name}.fa -o ${output_cram} ${sorted_bam}
-    samtools index ${output_cram}
+    samtools view \\
+        -@ ${task.cpus} \\
+        ${args} \\
+        -T ${reference} \\
+        -o ${output_cram} \\
+        ${sorted_bam}
+
+    samtools index -@ ${task.cpus} ${output_cram}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        samtools: \$(samtools --version | head -n 1 | sed 's/samtools //')
+        samtools: \$( samtools --version | head -n1 | awk '{print \$2}' )
     END_VERSIONS
     """
 
