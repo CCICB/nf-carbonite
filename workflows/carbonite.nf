@@ -16,6 +16,7 @@ include { STAR as STAR_RSEM } from '../modules/local/star.nf'
 include { STAR as STAR_TE } from '../modules/local/star.nf'
 include { RSEM as RSEM } from '../modules/local/rsem.nf'
 include { PICARD as PICARD } from '../modules/local/picard.nf'
+include { SAMTOOLS_CRAM as SAMTOOLS_CRAM } from '../modules/local/samtools_cram.nf'
 include { ARRIBA as ARRIBA } from '../modules/local/arriba.nf'
 include { RNAINDEL as RNAINDEL } from '../modules/local/rnaindel.nf'
 include { ISOFOX as ISOFOX } from '../modules/local/isofox.nf'
@@ -89,6 +90,14 @@ workflow RNASEQ {
         STAR_RSEM.out.aligned_bam,
     )
     ch_versions = ch_versions.mix(PICARD.out.versions.first())
+
+    if (params.run_cram) {
+        SAMTOOLS_CRAM (
+            PICARD.out.sorted_bam,
+            params.star_dir,
+        )
+        ch_versions = ch_versions.mix(SAMTOOLS_CRAM.out.versions.first())
+    }
 
     ARRIBA (
         params.star_dir,
