@@ -177,6 +177,11 @@
           "type": "boolean",
           "default": true,
           "description": "Run TALLSorts T-ALL subtype classification (set to false to skip)."
+        },
+        "run_cram": {
+          "type": "boolean",
+          "default": false,
+          "description": "Convert the Picard sorted BAM to CRAM (plus CRAI index) with samtools (set to true to enable)."
         }
       }
     }
