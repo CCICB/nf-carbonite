@@ -321,6 +321,19 @@ inputs:
         - 'true'
         - 'false'
         type: enum
+-   id: run_cram
+    inputBinding:
+        prefix: --run_cram
+    label: Convert the Picard sorted BAM to CRAM with samtools (set to true to enable)
+    sbg:category: Tool toggles
+    sbg:toolDefaultValue: 'false'
+    type:
+    - 'null'
+    -   name: run_cram
+        symbols:
+        - 'true'
+        - 'false'
+        type: enum
 -   doc: List of files not added as explicit workflow inputs but required for workflow
         execution.
     id: auxiliary_files
