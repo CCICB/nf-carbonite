@@ -164,14 +164,14 @@ workflow RNASEQ {
     GATK_SPLIT_CIGAR (
         PICARD.out.sorted_bam,
         params.star_dir,
-        params.gatk_interval_list
+        params.gatk_interval_list ?: ''
     )
     ch_versions = ch_versions.mix(GATK_SPLIT_CIGAR.out.versions.first())
 
     GATK_HAPLOTYPECALLER (
         GATK_SPLIT_CIGAR.out.gatk_bam,
         params.star_dir,
-        params.gatk_interval_list
+        params.gatk_interval_list ?: ''
     )
     ch_versions = ch_versions.mix(GATK_HAPLOTYPECALLER.out.versions.first())
 
