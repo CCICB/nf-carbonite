@@ -182,6 +182,12 @@
           "type": "boolean",
           "default": false,
           "description": "Convert the Picard sorted BAM to CRAM (plus CRAI index) with samtools (set to true to enable)."
+        },
+        "use_dump_versions": {
+          "type": "boolean",
+          "default": false,
+          "hidden": true,
+          "description": "Collate versions.yml through a process/publishDir instead of collectFile's storeDir. Enabled automatically on Cavatica to avoid vaporstore attribute conflicts."
         }
       }
     }
