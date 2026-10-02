@@ -146,38 +146,39 @@ workflow RNASEQ {
             ch_versions = ch_versions.mix(MINTIE.out.versions.first())
         }
     }
-    // Run ALLSorts (B-ALL subtype classifier) unless disabled
-    if (params.run_allsorts) {
+    // Run ALLSorts (B-ALL subtype classifier) unless skipped
+    if (!params.skip_allsorts) {
         ALLSORTS (
             RSEM.out.named_genes
         )
         ch_versions = ch_versions.mix(ALLSORTS.out.versions.first())
     }
 
-    // Run TALLSorts (T-ALL subtype classifier) unless disabled
-    if (params.run_tallsorts) {
+    // Run TALLSorts (T-ALL subtype classifier) unless skipped
+    if (!params.skip_tallsorts) {
         TALLSORTS (
             RSEM.out.named_genes
         )
         ch_versions = ch_versions.mix(TALLSORTS.out.versions.first())
     }
 
-    GATK_SPLIT_CIGAR (
-        PICARD.out.sorted_bam,
-        params.star_dir,
-        params.gatk_interval_list ?: ''
-    )
-    ch_versions = ch_versions.mix(GATK_SPLIT_CIGAR.out.versions.first())
 
-    GATK_HAPLOTYPECALLER (
-        GATK_SPLIT_CIGAR.out.gatk_bam,
-        params.star_dir,
-        params.gatk_interval_list ?: ''
-    )
-    ch_versions = ch_versions.mix(GATK_HAPLOTYPECALLER.out.versions.first())
 
     // Run ANNOVAR only if directory is provided
     if (params.annovar_dir) {
+        GATK_SPLIT_CIGAR (
+            PICARD.out.sorted_bam,
+            params.star_dir,
+            params.gatk_interval_list ?: ''
+        )
+        ch_versions = ch_versions.mix(GATK_SPLIT_CIGAR.out.versions.first())
+
+        GATK_HAPLOTYPECALLER (
+            GATK_SPLIT_CIGAR.out.gatk_bam,
+            params.star_dir,
+            params.gatk_interval_list ?: ''
+        )
+        ch_versions = ch_versions.mix(GATK_HAPLOTYPECALLER.out.versions.first())
         ANNOVAR (
             params.annovar_dir,
             GATK_HAPLOTYPECALLER.out.vcf

@@ -9,6 +9,10 @@ process STAR {
     output:
     tuple val(rnaseq_id), path("${rnaseq_id}.${params.ref_genome_version}.Aligned.toTranscriptome.out.bam"), emit: transcriptome_bam, optional: true
     tuple val(rnaseq_id), path("${rnaseq_id}.${params.ref_genome_version}.Aligned.out.bam") , emit: aligned_bam
+    path "${rnaseq_id}.${params.ref_genome_version}.SJ.out.tab"       , emit: splice_junctions, optional: true
+    path "${rnaseq_id}.${params.ref_genome_version}.Log.final.out"    , emit: log_final       , optional: true
+    path "${rnaseq_id}.${params.ref_genome_version}.Log.out"          , emit: log_out         , optional: true
+    path "${rnaseq_id}.${params.ref_genome_version}.Log.progress.out" , emit: log_progress    , optional: true
     path "versions.yml", emit: versions
 
     script:
@@ -25,6 +29,10 @@ process STAR {
     """
     touch ${rnaseq_id}.${params.ref_genome_version}.Aligned.toTranscriptome.out.bam
     touch ${rnaseq_id}.${params.ref_genome_version}.Aligned.out.bam
+    touch ${rnaseq_id}.${params.ref_genome_version}.SJ.out.tab
+    touch ${rnaseq_id}.${params.ref_genome_version}.Log.final.out
+    touch ${rnaseq_id}.${params.ref_genome_version}.Log.out
+    touch ${rnaseq_id}.${params.ref_genome_version}.Log.progress.out
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
